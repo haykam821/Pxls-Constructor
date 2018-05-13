@@ -39,8 +39,8 @@
     }
 
     function setUpGuide() {
-        const x = prompt("X position for build?");
-        const y = prompt("Y position for build?");
+        const x = parseInt(prompt("X position for build?"));
+        const y = parseInt(prompt("Y position for build?"));
         try {
             const map = JSON.parse(prompt("A 2D array in JSON (the map) for the build?"));
             
