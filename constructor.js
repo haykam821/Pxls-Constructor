@@ -7,8 +7,8 @@
 	const randInt = require("random-int");
 
 	async function forEachAsync(targetArray, callback) {
-		for (const t of this) {
-			await callback(t);
+		for (const item of targetArray) {
+			await callback(item);
 		}
 	}
 
