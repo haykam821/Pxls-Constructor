@@ -36,6 +36,16 @@
                 pixel.place();
             });
         }
+        placeAllTimed() {
+            this.allPixels().forEachAsync(async pixel => {
+                await waitUntil(() => {
+                    return App.cooledDown();
+                });
+                await sleep(1000);
+                pixel.place();
+                console.log("Cooled down!")
+            });
+        }
     }
 
     function setUpGuide() {
@@ -45,7 +55,7 @@
             const map = JSON.parse(prompt("A 2D array in JSON (the map) for the build?"));
             
             const build = new PixelBuild(x, y, map);
-            build.placeAll();
+            build.placeAllTimed();
         } catch (error) {
             alert("This JSON is malformed. Use createMap.js to make correct JSON.");
         }
