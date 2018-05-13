@@ -7,6 +7,9 @@
     "parserOptions": {
         "ecmaVersion": 2017
     },
+    "globals": {
+        "App": false
+    },
     "rules": {
         "brace-style": [
             "error",
