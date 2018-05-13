@@ -51,7 +51,7 @@
 				await waitUntil(() => {
 					return App.cooledDown();
 				});
-				await sleep(1000);
+				await sleep(randInt(500, 2500));
 				pixel.place();
 				console.log("Cooled down!");
 			});
