@@ -18,5 +18,8 @@
     "board"
   ],
   "author": "haykam821",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "async-wait-until": "^1.1.7"
+  }
 }
