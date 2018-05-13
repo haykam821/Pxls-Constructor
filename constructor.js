@@ -4,6 +4,7 @@
 (() => {
 	const sleep = require("sleep-promise");
 	const waitUntil = require("async-wait-until");
+	const randInt = require("random-int");
 
 
     class Pixel {

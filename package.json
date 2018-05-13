@@ -22,6 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "async-wait-until": "^1.1.7",
+    "random-int": "^1.0.0",
     "sleep-promise": "^6.0.0"
   }
 }
