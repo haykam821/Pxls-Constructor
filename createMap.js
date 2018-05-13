@@ -3,6 +3,7 @@ const path = require("path");
 const chalk = require("chalk");
 const getter = require("pixel-getter");
 const sizeOf = require("buffer-image-size");
+const splitArray = require("split-array");
 
 fs.readFile(path.normalize("./image.png"), (error, data) => {
     if (error) { 
@@ -18,9 +19,9 @@ fs.readFile(path.normalize("./image.png"), (error, data) => {
         })();
         process.stdout.write(chalk.red(`Error: ${errorOutput}\n`));
     } else {
-        console.log(data)
         getter.get(data, (error, pixels) => {
-            //console.log(pixels);
+            const dimensions = sizeOf(data);
+            const pixel2D = [];
         });
     }
 });
