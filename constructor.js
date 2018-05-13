@@ -46,8 +46,8 @@
 				pixel.place();
 			});
 		}
-		placeAllTimed() {
-			forEachAsync(this.allPixels(), async pixel => {
+		async placeAllTimed() {
+			await forEachAsync(this.allPixels(), async pixel => {
 				await waitUntil(() => {
 					return App.cooledDown();
 				}, 120000);
@@ -55,6 +55,7 @@
 				pixel.place();
 				console.log("Cooled down!");
 			});
+			console.log("All pixels have been placed!");
 		}
 	}
 
