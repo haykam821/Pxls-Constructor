@@ -59,10 +59,10 @@
 	}
 
 	function setUpGuide() {
-		const x = parseInt(prompt("X position for build?"));
-		const y = parseInt(prompt("Y position for build?"));
+		const x = parseInt(prompt("X position for build?", 0));
+		const y = parseInt(prompt("Y position for build?", 0));
 		try {
-			const map = JSON.parse(prompt("A 2D array in JSON (the map) for the build?"));
+			const map = JSON.parse(prompt("A 2D array in JSON (the map) for the build?", "[ [1, 2], [3, 4] ]"));
 
 			const build = new PixelBuild(x, y, map);
 			build.placeAllTimed();
