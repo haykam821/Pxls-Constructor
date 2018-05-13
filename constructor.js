@@ -6,6 +6,11 @@
 	const waitUntil = require("async-wait-until");
 	const randInt = require("random-int");
 
+	async function forEachAsync(targetArray, callback) {
+		for (const t of this) {
+			await callback(t);
+		}
+	}
 
     class Pixel {
         constructor(x, y, color) {
