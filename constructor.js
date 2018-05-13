@@ -2,8 +2,9 @@
 // from detecting any of the classes defined
 // by this tool and handing out a shadow ban.
 (() => {
+	const sleep = require("sleep-promise");
+	const waitUntil = require("async-wait-until");
 
-   const waitUntil = require("async-wait-until");
 
     class Pixel {
         constructor(x, y, color) {
