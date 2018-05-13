@@ -5,7 +5,8 @@
   "main": "constructor.js",
   "devDependencies": {
     "uglify-es": "^3.3.9",
-    "browserify": "^16.2.2"
+    "browserify": "^16.2.2",
+    "eslint": "^4.19.1"
   },
   "scripts": {
     "pack": "browserify constructor.js | uglifyjs -c > bundle.js"
