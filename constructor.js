@@ -50,7 +50,7 @@
 			forEachAsync(this.allPixels(), async pixel => {
 				await waitUntil(() => {
 					return App.cooledDown();
-				});
+				}, 120000);
 				await sleep(randInt(500, 2500));
 				pixel.place();
 				console.log("Cooled down!");
