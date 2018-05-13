@@ -24,7 +24,7 @@
 
             this.map = map.map((row, yIndex) => {
                 return row.map((pixel, xIndex) => {
-                    return new Pixel(xIndex, yIndex, pixel);
+                    return new Pixel(x + xIndex, y + yIndex, pixel);
                 });
             });
         }
