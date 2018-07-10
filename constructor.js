@@ -48,12 +48,14 @@
 		}
 		async placeAllTimed() {
 			await forEachAsync(this.allPixels(), async pixel => {
-				await waitUntil(() => {
-					return App.cooledDown();
-				}, 120000);
-				await sleep(randInt(500, 2500));
-				pixel.place();
-				console.log("Cooled down!");
+				if (pixel.color !== null) {
+					await waitUntil(() => {
+						return App.cooledDown();
+					}, 120000);
+					// await sleep(randInt(500, 2500));
+					pixel.place();
+					console.log("Cooled down!");
+				}
 			});
 			console.log("All pixels have been placed!");
 		}
@@ -63,12 +65,12 @@
 		const x = parseInt(prompt("X position for build?", 0));
 		const y = parseInt(prompt("Y position for build?", 0));
 		try {
-			const map = JSON.parse(prompt("A 2D array in JSON (the map) for the build?", "[ [1, 2], [3, 4] ]"));
+			const map = JSON.parse(prompt("A 2D array in JSON (the map) for the build? You can generate this with Palette Image Mapper.", "[ [1, 2], [3, 4] ]"));
 
 			const build = new PixelBuild(x, y, map);
 			build.placeAllTimed();
 		} catch (error) {
-			alert("This JSON is malformed. Use createMap.js to make correct JSON.");
+			alert("This JSON is malformed. Use Palette Image Mapper to make correct JSON.");
 		}
 	}
 	setUpGuide();
