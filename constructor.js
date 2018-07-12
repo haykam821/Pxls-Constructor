@@ -9,15 +9,16 @@ async function forEachAsync(targetArray, callback) {
 }
 
 class Pixel {
-	constructor(x, y, color) {
+	constructor(x, y, color, client) {
 		this.position = {
 			x: x,
 			y: y,
 		};
 		this.color = color;
+		this.client = client;
 	}
 	place() {
-		ws.send({
+		this.client.send({
 			type: "pixel",
 			color: this.color,
 			x: this.position.x,
@@ -26,15 +27,16 @@ class Pixel {
 	}
 }
 class PixelBuild {
-	constructor(x, y, map) {
+	constructor(x, y, map, client) {
 		this.position = {
 			x: x,
 			y: y,
 		};
+		this.client = client;
 
 		this.map = map.map((row, yIndex) => {
 			return row.map((pixel, xIndex) => {
-				return new Pixel(x + xIndex, y + yIndex, pixel);
+				return new Pixel(x + xIndex, y + yIndex, pixel, client);
 			});
 		});
 	}
@@ -54,48 +56,10 @@ class PixelBuild {
 
 				pixel.place();
 
-				process.stdout.write("Cooled down!");
+				process.stdout.write("Cooled down!\n");
 			}
 		});
-		process.stdout.write("All pixels have been placed!");
-	}
-}
-
-const modes = {
-	build: () => {
-		const x = parseInt(prompt("X position for build?", 0));
-		const y = parseInt(prompt("Y position for build?", 0));
-		try {
-			const map = JSON.parse(prompt("A 2D array in JSON (the map) for the build? You can generate this with Palette Image Mapper.", "[ [1, 2], [3, 4] ]"));
-
-			const build = new PixelBuild(x, y, map);
-			build.placeAllTimed();
-		} catch (error) {
-			alert("This JSON is malformed. Use Palette Image Mapper to make correct JSON.");
-		}
-	},
-	random: () => {
-		const colorPrompt = prompt("Which color pixel? (Color index or 'random')", "random");
-		const board = document.getElementById("board");
-		if (colorPrompt === "random") {
-			setInterval(() => {
-				new Pixel(randInt(board.width), randInt(board.height), randInt(0, 23)).place();
-			});
-		} else {
-			const color = parseInt(colorPrompt);
-			setInterval(() => {
-				new Pixel(randInt(board.width), randInt(board.height), color).place();
-			});
-		}
-	},
-};
-
-function setUpGuide() {
-	const type = prompt("Pick a mode: " + Object.keys(modes).join(", "), "build");
-	if (modes[type]) {
-		return modes[type]();
-	} else {
-		alert("That's not a mode.");
+		process.stdout.write("All pixels have been placed!\n");
 	}
 }
 
@@ -104,19 +68,78 @@ let cooldown = 0;
 const randomUseragent = require("random-useragent");
 
 const ws = require("ws");
-const client = new ws("wss://pxls.space/ws/", [], {
-	headers: {
-		"Cookie": "pxls-token=6283|ZDNToTiOZaMKuqmqgyQwguNzImhBcQeZv",
-		"User-Agent": randomUseragent.getRandom(),
-	},
-});
-client.on("message", message => {
-	const data = JSON.parse(message);
-	if (data.type === "cooldown") {
-		cooldown = (new Date()).getTime() + (data.wait * 1000);
-	}
-});
 
 function hasCooledDown() {
 	return cooldown < Date.now();
 }
+
+function makeClient(token) {
+	const client = new ws("wss://pxls.space/ws/", [], {
+		headers: {
+			"Cookie": token,
+			"User-Agent": randomUseragent.getRandom(),
+		},
+	});
+	client.on("message", message => {
+		const data = JSON.parse(message);
+		if (data.type === "cooldown") {
+			cooldown = (new Date()).getTime() + (data.wait * 1000);
+		}
+	});
+
+	return client;
+}
+
+const yargs = require("yargs");
+
+yargs.option("token", {
+	description: "The token for authentication with Pxls.",
+	demandOption: true,
+});
+
+yargs.command("build", "Builds art via a 2D array.", builder => {
+	builder.option("x", {
+		description: "The X position of the art.",
+		type: "number",
+		default: 0,
+	});
+	builder.option("y", {
+		description: "The Y position of the art.",
+		type: "number",
+		default: 0,
+	});
+	builder.option("art", {
+		description: "A 2D array in JSON format representing the art you would like to build.",
+		type: "string",
+		demandOption: true,
+	});
+}, argv => {
+	const client = makeClient(argv.token);
+	try {
+		const map = JSON.parse(argv.art);
+
+		const build = new PixelBuild(argv.x, argv.y, map, client);
+		build.placeAllTimed();
+	} catch (error) {
+		process.stderr.write("This JSON is malformed. Use Palette Image Mapper to make correct JSON.\n");
+	}
+});
+yargs.command("random", "Be an annoyance and randomly place pixels.", builder => {
+	builder.option("color", {
+		description: "The color to place, or 'random'.",
+		default: "random",
+	});
+}, argv => {
+	if (argv.color === "random") {
+		setInterval(() => {
+			new Pixel(randInt(1000), randInt(1000), randInt(0, 23)).place();
+		});
+	} else {
+		const color = parseInt(argv.color);
+		setInterval(() => {
+			new Pixel(randInt(1000), randInt(1000), color).place();
+		});
+	}
+});
+
+yargs.argv;
