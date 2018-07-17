@@ -90,6 +90,11 @@ function makeClient(token) {
 	return client;
 }
 
+const yargonaut = require("yargonaut");
+
+yargonaut.helpStyle("green");
+yargonaut.errorsStyle("red");
+
 const yargs = require("yargs");
 
 yargs.option("token", {
