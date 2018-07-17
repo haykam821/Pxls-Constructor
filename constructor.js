@@ -125,21 +125,23 @@ yargs.command("build", "Builds art via a 2D array.", builder => {
 	}
 });
 yargs.command("random", "Be an annoyance and randomly place pixels.", builder => {
-	builder.option("color", {
-		description: "The color to place, or 'random'.",
-		default: "random",
-	});
-}, argv => {
-	if (argv.color === "random") {
-		setInterval(() => {
-			new Pixel(randInt(1000), randInt(1000), randInt(0, 23)).place();
-		});
-	} else {
+	builder.command("specific", "Places a specific color at random positions.", {
+		color: {
+			description: "The color index to place.",
+			default: 0,
+			type: "number",
+		},
+	}, argv => {
 		const color = parseInt(argv.color);
 		setInterval(() => {
 			new Pixel(randInt(1000), randInt(1000), color).place();
 		});
-	}
+	});
+	builder.command("all", "Places random colors randomly.", {}, () => {
+		setInterval(() => {
+			new Pixel(randInt(1000), randInt(1000), randInt(0, 23)).place();
+		});
+	});
 });
 
 yargs.argv;
