@@ -144,4 +144,6 @@ yargs.command("random", "Be an annoyance and randomly place pixels.", builder =>
 	});
 });
 
+yargs.wrap(yargs.terminalWidth());
+
 yargs.argv;
