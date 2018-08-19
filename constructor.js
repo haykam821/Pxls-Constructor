@@ -18,12 +18,12 @@ class Pixel {
 		this.client = client;
 	}
 	place() {
-		this.client.send({
+		this.client.send(JSON.stringify({
 			type: "pixel",
 			color: this.color,
 			x: this.position.x,
 			y: this.position.y,
-		});
+		}));
 	}
 }
 class PixelBuild {
@@ -74,20 +74,23 @@ function hasCooledDown() {
 }
 
 function makeClient(token) {
-	const client = new ws("wss://pxls.space/ws/", [], {
-		headers: {
-			"Cookie": token,
-			"User-Agent": `Pxls-Constructor v${version}`,
-		},
-	});
-	client.on("message", message => {
-		const data = JSON.parse(message);
-		if (data.type === "cooldown") {
-			cooldown = (new Date()).getTime() + (data.wait * 1000);
-		}
-	});
+	return new Promise((resolve, reject) => {
+		const client = new ws("wss://pxls.space/ws/", [], {
+			headers: {
+				"Cookie": token,
+				"User-Agent": `Pxls Constructor v${version}`,
+			},
+		});
+		client.on("message", message => {
+			const data = JSON.parse(message);
+			if (data.type === "cooldown") {
+				cooldown = (new Date()).getTime() + (data.wait * 1000);
+			}
+		});
 
-	return client;
+		client.addEventListener("open", resolve);
+		client.addEventListener("error", reject);
+	});
 }
 
 const yargonaut = require("yargonaut");
@@ -118,8 +121,9 @@ yargs.command("build", "Builds art via a 2D array.", builder => {
 		type: "string",
 		demandOption: true,
 	});
-}, argv => {
-	const client = makeClient(argv.token);
+}, async argv => {
+	const client = await makeClient(argv.token);
+
 	try {
 		const map = JSON.parse(argv.art);
 
@@ -136,15 +140,19 @@ yargs.command("random", "Be an annoyance and randomly place pixels.", builder =>
 			default: 0,
 			type: "number",
 		},
-	}, argv => {
+	}, async argv => {
+		const client = await makeClient(argv.token);
+
 		const color = parseInt(argv.color);
 		setInterval(() => {
-			new Pixel(randInt(1000), randInt(1000), color).place();
+			new Pixel(randInt(1000), randInt(1000), color, client).place();
 		});
 	});
-	builder.command("all", "Places random colors randomly.", {}, () => {
+	builder.command("all", "Places random colors randomly.", {}, async argv => {
+		const client = await makeClient(argv.token);
+
 		setInterval(() => {
-			new Pixel(randInt(1000), randInt(1000), randInt(0, 23)).place();
+			new Pixel(randInt(1000), randInt(1000), randInt(0, 23), client).place();
 		});
 	});
 });
