@@ -48,7 +48,7 @@ class PixelBuild {
 			pixel.place();
 		});
 	}
-	async placeAllTimed() {
+	async placeAllTimed(watch) {
 		await forEachAsync(this.allPixels(), async pixel => {
 			if (pixel.color !== null) {
 				await waitUntil(hasCooledDown, 120000);
@@ -59,7 +59,12 @@ class PixelBuild {
 				process.stdout.write("Cooled down!\n");
 			}
 		});
-		process.stdout.write("All pixels have been placed!\n");
+		if (watch) {
+			process.stdout.write("Watching again.\n");
+			this.placeAllTimed(watch);
+		} else {
+			process.stdout.write("All pixels have been placed!\n");
+		}
 	}
 }
 
@@ -128,13 +133,17 @@ yargs.command("build", "Builds art via a 2D array.", builder => {
 		type: "string",
 		demandOption: true,
 	});
+	builder.option("watch", {
+		description: "If true, repeats the building after all pixels were placed.",
+		type: "boolean",
+	});
 }, argv => {
 	const client = makeClient(argv.token);
 	try {
 		const map = JSON.parse(argv.art);
 
 		const build = new PixelBuild(argv.x, argv.y, map, client);
-		build.placeAllTimed();
+		build.placeAllTimed(argv.watch);
 	} catch (error) {
 		process.stderr.write("This JSON is malformed. Use Palette Image Mapper to make correct JSON.\n");
 	}
@@ -165,13 +174,17 @@ yargs.command("fill", "Fills a rectangular space with a single color.", builder 
 		type: "number",
 		default: 0,
 	});
+	builder.option("watch", {
+		description: "If true, repeats the filling after all pixels were placed.",
+		type: "boolean",
+	});
 }, argv => {
 	const client = makeClient(argv.token);
 
 	const rect = rectArray(argv.width, argv.height, argv.color);
 
 	const build = new PixelBuild(argv.x, argv.y, rect, client);
-	build.placeAllTimed();
+	build.placeAllTimed(argv.watch);
 });
 yargs.command("random", "Be an annoyance and randomly place pixels.", builder => {
 	builder.command("specific", "Places a specific color at random positions.", {
