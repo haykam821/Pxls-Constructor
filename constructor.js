@@ -90,6 +90,16 @@ function makeClient(token) {
 	return client;
 }
 
+/**
+ * Makes a 2D array filled with a specific value.
+ * @param {number} width The width of the 2D array.
+ * @param {number} height The height of the 2D array.
+ * @param {number} value The value to fill the 2D array with.
+ */
+function rectArray(width, height, value) {
+	return new Array(height).fill(new Array(width).fill(value));
+}
+
 const yargonaut = require("yargonaut");
 
 yargonaut.helpStyle("green");
@@ -128,6 +138,40 @@ yargs.command("build", "Builds art via a 2D array.", builder => {
 	} catch (error) {
 		process.stderr.write("This JSON is malformed. Use Palette Image Mapper to make correct JSON.\n");
 	}
+});
+yargs.command("fill", "Fills a rectangular space with a single color.", builder => {
+	builder.option("x", {
+		description: "The X position of the rectangle.",
+		type: "number",
+		default: 0,
+	});
+	builder.option("y", {
+		description: "The Y position of the rectangle.",
+		type: "number",
+		default: 0,
+	});
+	builder.option("width", {
+		description: "The width of the rectangle.",
+		type: "number",
+		default: 5,
+	});
+	builder.option("height", {
+		description: "The height of the rectangle.",
+		type: "number",
+		default: 5,
+	});
+	builder.option("color", {
+		description: "The color index of the rectangle.",
+		type: "number",
+		default: 0,
+	});
+}, argv => {
+	const client = makeClient(argv.token);
+
+	const rect = rectArray(argv.width, argv.height, argv.color);
+
+	const build = new PixelBuild(argv.x, argv.y, rect, client);
+	build.placeAllTimed();
 });
 yargs.command("random", "Be an annoyance and randomly place pixels.", builder => {
 	builder.command("specific", "Places a specific color at random positions.", {
