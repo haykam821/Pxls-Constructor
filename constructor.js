@@ -18,12 +18,12 @@ class Pixel {
 		this.client = client;
 	}
 	place() {
-		this.client.send({
+		this.client.send(JSON.stringify({
 			type: "pixel",
 			color: this.color,
 			x: this.position.x,
 			y: this.position.y,
-		});
+		}));
 	}
 }
 class PixelBuild {
@@ -76,7 +76,7 @@ function hasCooledDown() {
 function makeClient(token) {
 	const client = new ws("wss://pxls.space/ws/", [], {
 		headers: {
-			"Cookie": token,
+			"Cookie": "pxls-token=" + token,
 			"User-Agent": `Pxls-Constructor v${version}`,
 		},
 	});
