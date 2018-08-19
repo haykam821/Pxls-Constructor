@@ -65,7 +65,7 @@ class PixelBuild {
 
 let cooldown = 0;
 
-const randomUseragent = require("random-useragent");
+const version = require("./package.json").version;
 
 const ws = require("ws");
 
@@ -77,7 +77,7 @@ function makeClient(token) {
 	const client = new ws("wss://pxls.space/ws/", [], {
 		headers: {
 			"Cookie": token,
-			"User-Agent": randomUseragent.getRandom(),
+			"User-Agent": `Pxls-Constructor v${version}`,
 		},
 	});
 	client.on("message", message => {
