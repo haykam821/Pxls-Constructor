@@ -8,6 +8,11 @@ async function forEachAsync(targetArray, callback) {
 	}
 }
 
+const debug = require("debug")("pxls-constructor");
+
+// we are using this for regular output, so always enable it
+debug.enabled = true;
+
 class Pixel {
 	constructor(x, y, color, client) {
 		this.position = {
@@ -56,14 +61,14 @@ class PixelBuild {
 
 				pixel.place();
 
-				process.stdout.write("Cooled down!\n");
+				debug("Cooled down!");
 			}
 		});
 		if (watch) {
-			process.stdout.write("Watching again.\n");
+			debug("Watching again.");
 			this.placeAllTimed(watch);
 		} else {
-			process.stdout.write("All pixels have been placed!\n");
+			debug("All pixels have been placed!");
 		}
 	}
 }
