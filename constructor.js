@@ -206,7 +206,7 @@ yargs.command("random", "Be an annoyance and randomly place pixels.", builder =>
 	});
 });
 
-yargs.env("CONSTRUCTOR");
+yargs.env("PXLS_CONSTRUCTOR");
 yargs.wrap(yargs.terminalWidth());
 
 yargs.argv;

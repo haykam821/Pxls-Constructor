@@ -23,4 +23,4 @@ This will show you all command and options you can use. Run `node . build --help
 
 Your token is a cookie. To get this cookie, go to the Pxls site, open up the developer tools menu, switch to the Application tab (it may be collapsed, if so use the double arrow next to the other tab names), under storage click Cookies, then the website domain, and finally find the row with `pxls-token`, and copy the value next to that.
 
-Once you have your token, specify it with `--token <your token>`. You can also set this with the `CONSTRUCTOR_TOKEN` environment variable.
+Once you have your token, specify it with `--token <your token>`. You can also set this with the `PXLS_CONSTRUCTOR_TOKEN` environment variable.
