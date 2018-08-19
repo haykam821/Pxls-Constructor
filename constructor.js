@@ -18,12 +18,12 @@ class Pixel {
 		this.client = client;
 	}
 	place() {
-		this.client.send(JSON.stringify({
+		this.client.send({
 			type: "pixel",
 			color: this.color,
 			x: this.position.x,
 			y: this.position.y,
-		}));
+		});
 	}
 }
 class PixelBuild {
@@ -74,23 +74,20 @@ function hasCooledDown() {
 }
 
 function makeClient(token) {
-	return new Promise((resolve, reject) => {
-		const client = new ws("wss://pxls.space/ws/", [], {
-			headers: {
-				"Cookie": token,
-				"User-Agent": `Pxls Constructor v${version}`,
-			},
-		});
-		client.on("message", message => {
-			const data = JSON.parse(message);
-			if (data.type === "cooldown") {
-				cooldown = (new Date()).getTime() + (data.wait * 1000);
-			}
-		});
-
-		client.addEventListener("open", resolve);
-		client.addEventListener("error", reject);
+	const client = new ws("wss://pxls.space/ws/", [], {
+		headers: {
+			"Cookie": token,
+			"User-Agent": `Pxls-Constructor v${version}`,
+		},
 	});
+	client.on("message", message => {
+		const data = JSON.parse(message);
+		if (data.type === "cooldown") {
+			cooldown = (new Date()).getTime() + (data.wait * 1000);
+		}
+	});
+
+	return client;
 }
 
 const yargonaut = require("yargonaut");
@@ -121,9 +118,8 @@ yargs.command("build", "Builds art via a 2D array.", builder => {
 		type: "string",
 		demandOption: true,
 	});
-}, async argv => {
-	const client = await makeClient(argv.token);
-
+}, argv => {
+	const client = makeClient(argv.token);
 	try {
 		const map = JSON.parse(argv.art);
 
@@ -140,19 +136,15 @@ yargs.command("random", "Be an annoyance and randomly place pixels.", builder =>
 			default: 0,
 			type: "number",
 		},
-	}, async argv => {
-		const client = await makeClient(argv.token);
-
+	}, argv => {
 		const color = parseInt(argv.color);
 		setInterval(() => {
-			new Pixel(randInt(1000), randInt(1000), color, client).place();
+			new Pixel(randInt(1000), randInt(1000), color).place();
 		});
 	});
-	builder.command("all", "Places random colors randomly.", {}, async argv => {
-		const client = await makeClient(argv.token);
-
+	builder.command("all", "Places random colors randomly.", {}, () => {
 		setInterval(() => {
-			new Pixel(randInt(1000), randInt(1000), randInt(0, 23), client).place();
+			new Pixel(randInt(1000), randInt(1000), randInt(0, 23)).place();
 		});
 	});
 });
