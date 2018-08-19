@@ -17,4 +17,10 @@ It is very easy to use this tool. To show help, run this command:
 
     node . --help
 
-This will show you all command and options you can use. Run `node . build --help` or `node . random --help` to show more options.
+This will show you all command and options you can use. Run `node . build --help` or `node . random --help` to show more options. All constructing features in this bot require a token to work by appending `--token <your token>`; see the below section to find how to get this token.
+
+## Getting Token
+
+Your token is a cookie. To get this cookie, go to the Pxls site, open up the developer tools menu, switch to the Application tab (it may be collapsed, if so use the double arrow next to the other tab names), under storage click Cookies, then the website domain, and finally find the row with `pxls-token`, and copy the value next to that.
+
+Once you have your token, specify it with `--token <your token>`. You can also set this with the `CONSTRUCTOR_TOKEN` environment variable.
